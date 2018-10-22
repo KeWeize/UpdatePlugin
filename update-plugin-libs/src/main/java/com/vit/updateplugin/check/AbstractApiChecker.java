@@ -2,6 +2,7 @@ package com.vit.updateplugin.check;
 
 import android.util.Log;
 
+import com.vit.updateplugin.callback.OnCheckUpdateListener;
 import com.vit.updateplugin.parse.AbstractParser;
 import com.vit.updateplugin.parse.UpdateBean;
 import com.vit.updateplugin.utils.UpdateUtils;
@@ -24,6 +25,7 @@ public abstract class AbstractApiChecker implements Runnable {
     private Map<String, String> headers;
     private Map<String, String> params;
     private AbstractParser mParser;
+    private OnCheckUpdateListener mCheckUpdateListener;
 
     /**
      * 由UpdatePlug 注入请求信息时使用
@@ -47,6 +49,15 @@ public abstract class AbstractApiChecker implements Runnable {
      */
     public final void setParser(AbstractParser parser) {
         this.mParser = parser;
+    }
+
+    /**
+     * 注入回调接口实例
+     *
+     * @param mCheckUpdateListener
+     */
+    public final void setOnCheckUpdateListener(OnCheckUpdateListener mCheckUpdateListener) {
+        this.mCheckUpdateListener = mCheckUpdateListener;
     }
 
     @Override
@@ -84,7 +95,7 @@ public abstract class AbstractApiChecker implements Runnable {
         if (mParser == null) {
             // 解析对象缺失
             throw new RuntimeException("parser missing," +
-                    "you must call the method setParser(...) to injection request parser");
+                    "you must call the method setParser(...) to injection parser");
         }
         UpdateBean mUpdate = mParser.parse(response);
         try {
